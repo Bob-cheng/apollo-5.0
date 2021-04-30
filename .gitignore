@@ -83,9 +83,15 @@ modules/drivers/gnss/conf/conf_us
 
 # Data bag
 docs/demo_guide/*.bag
+demo_*.record
+
 
 # Logs
 cyber/log/*
+cyber_bridge.log.info*
+cyber_bridge.INFO
+Bag_Env*.log
 
 # bazel cache and others
 .cache/
+
