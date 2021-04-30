@@ -232,10 +232,11 @@ function main(){
     APOLLO_DEV="apollo_dev_${USER}"
     docker ps -a --format "{{.Names}}" | grep "$APOLLO_DEV" 1>/dev/null
     if [ $? == 0 ]; then
-        if [[ "$(docker inspect --format='{{.Config.Image}}' $APOLLO_DEV 2> /dev/null)" != "$APOLLO_DEV_IMAGE" ]]; then
-            rm -rf $APOLLO_ROOT_DIR/bazel-*
-            rm -rf ${CACHE_ROOT_DIR}/bazel/*
-        fi
+        ## Commented By Bob:
+        # if [[ "$(docker inspect --format='{{.Config.Image}}' $APOLLO_DEV 2> /dev/null)" != "$APOLLO_DEV_IMAGE" ]]; then
+            #rm -rf $APOLLO_ROOT_DIR/bazel-*
+            #rm -rf ${CACHE_ROOT_DIR}/bazel/*
+        # fi
         docker stop $APOLLO_DEV 1>/dev/null
         docker rm -v -f $APOLLO_DEV 1>/dev/null
     fi
@@ -317,11 +318,13 @@ function main(){
     if [[ $DOCKER_VERSION -ge "19" ]] && ! type nvidia-docker; then
         DOCKER_CMD="docker"
         USE_GPU=1
-        GPUS="--gpus all"
+        # GPUS="--gpus all"
+	    GPUS="--gpus \"device=1\""
     else
         DOCKER_CMD="nvidia-docker"
         USE_GPU=1
-        GPUS=""
+        # GPUS=""
+        GPUS="--gpus \"device=1\""
     fi
 
     set -x
@@ -332,6 +335,7 @@ function main(){
         --name $APOLLO_DEV \
         ${MAP_VOLUME_CONF} \
         ${OTHER_VOLUME_CONF} \
+	-e CUDA_VISIBLE_DEVICES=1\
         -e DISPLAY=$display \
         -e DOCKER_USER=$USER \
         -e USER=$USER \
